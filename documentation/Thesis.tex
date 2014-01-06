@@ -10,7 +10,7 @@
 % appear on the Web site listed above.
 
 %\documentclass[12pt,dvips]{report}
-\documentclass[12pt]{report}
+\documentclass[11pt]{report}
 \setlength{\textwidth}{6.5in}
 \setlength{\textheight}{8.5in}
 \setlength{\evensidemargin}{0in}
@@ -21,7 +21,6 @@
 % Uncomment for double-spaced document.
 % \renewcommand{\baselinestretch}{2}
 % \usepackage{epsf}
-
 %--------packages I used----------------------------
 \usepackage{verbatim}
 \usepackage{latexsym}
@@ -51,7 +50,9 @@
 \begin{center}
 % TITLE
 {\Large 
-Automated Social Group Modeling for Characterizing and Forecasting Elections
+Automated Vocabulary Building\\
+for Characterizing and Forecasting Elections\\
+using Social Media Analytics
 }
 \vfill
 Aravindan Mahendiran
@@ -71,33 +72,40 @@ Aditya Prakash
 January 10, 2014 \\
 Blacksburg, Virginia
 \vfill
-Keywords: Forecasting, Twitter, Query Expansion, Elections, Probabilistic Soft Logic \\
+Keywords: Election Forecasting, Twitter, Query Expansion, Social Group Modeling, Probabilistic Soft Logic \\
 Copyright 2014, Aravindan Mahendiran
 \end{center}
 \pagebreak
 \thispagestyle{empty}
 
 \begin{center}
-{\large Automated Social Group Modeling for Characterizing and Forecasting Elections}
+{\large Automated Vocabulary Building\\
+for Characterizing and Forecasting Elections\\
+using Social Media Analytics}
 \vfill
 Aravindan Mahendiran
 \vfill
 (ABSTRACT)
 \vfill
 \end{center}
-Twitter mining over the last few years has garnered a lot of attention from the research community. 
-Strong correlations have been shown between Twitter \emph{‘mentions’} and stock markets, book sales and flu outbreaks which is then used for forecasting.
-Even though such methodologies are accurate in forecasting the trends to a great extent, their performance is dictated by the domain specific vocabulary is used to track the relevant tweets. 
-Such a vocabulary is usually provided by subject matter experts but is not exhaustive.
-The language used in Twitter is drastically different from other forms of writing like those in news articles or even web blogs.  
-It constantly evolves with time as users adopt popular hash-tags to express their opinion.
-Thus, the vocabulary used by the forecasting algorithms needs to be dynamic in nature and should capture the rising trends of the domain. 
-Otherwise, the prediction algorithms miss out on capturing the some of the most informative documents.
-\newline 
-We propose a novel unsupervised learning algorithm builds a vocabulary through modeling user preferences by exploiting the explicit and latent structure in such data sets.
-We use Probabilistic Soft Logic, a framework for probabilistic reasoning over relational domains, to develop a query expansion algorithm that learns such a dynamic vocabulary for any given domain.  
-Using 7 presidential elections from Latin America we show how such a query expansion methodology improves the recall and accuracy of two state of the art election prediction algorithms. 
-Through this approach we achieve close to 2x increase in the number of documents used for predictions and 16.13\% reduction in the prediction error. 
+Twitter has become a popular data source in the recent decade and garnered a significant amount
+of attention as a surrogate data source for many important forecasting problems.
+Strong correlations have been observed between Twitter indicators
+and real-world trends spanning elections,
+stock markets, book sales, and flu outbreaks.
+A key ingredient to all methods that use Twitter for forecasting is to agree on a domain-specific
+vocabulary to track the pertinent tweets, which is typically provided by subject matter experts (SMEs).
+The language used in Twitter drastically differs from other forms of online discourse,
+such as news articles and blogs.
+It constantly evolves over time as users adopt popular hashtags to express their opinions.
+Thus, the vocabulary used by forecasting algorithms needs to be dynamic in nature and should capture emerging 
+trends over time.
+This thesis proposes a novel unsupervised learning algorithm that
+builds a dynamic vocabulary using Probabilistic Soft Logic (PSL), a framework for probabilistic reasoning over 
+relational domains. Using eight presidential elections from Latin America, we show how our query expansion methodology 
+improves the performance of traditional election forecasting algorithms. 
+Through this approach we demonstrate how we can achieve close to a two-fold increase in the number of tweets
+retrieved for predictions and a 15.58\% reduction in prediction error. 
 \pagebreak
 
 % Dedication and Acknowledgments are both optional
@@ -110,7 +118,9 @@ Through this approach we achieve close to 2x increase in the number of documents
 
 \chapter*{Acknowledgments}
 \vspace*{\fill}
-\Large{First and foremost I would like to thank my adviser Dr.Naren Ramakrishnan. He was not only instrumental in kindling my interest in machine learning and data mining but is also my mentor in many ways.\\
+\Large{First and foremost, I would like to thank my advisor Dr.Naren Ramakrishnan. He was not only instrumental in kindling my interest in machine learning and data mining but is also my mentor in many ways.\\
+I would like to thank Dr.Cal Ribbens and Dr.Aditya Prakash for their guidance throughout my research.\\
+I would also like to thank Dr.Bert Huang and Dr.Lise Getoor for introducing me to Probabilistic Soft Logic and providing me the PSL engine for my research.\\
 I would like to thank my fellow graduate students Nabeel Mohammed, Rupinder Paul Khandpur and Sathappan Muthiah. Their help and support were invaluable through my graduate studies.
 }
 \vspace{\fill}
