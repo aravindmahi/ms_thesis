@@ -332,6 +332,7 @@ class Elections(object):
         toDate = datetime.strptime(toDateStr, "%d %b %Y")
         # populate regression space for each candidate and get prediction
         for candidate in self.candidatesJson:
+            print candidate
             dateList = self.candidatesJson[candidate]["polls"].keys()
             # removing data points that are outside the range
             for dateStr in dateList:
@@ -373,6 +374,7 @@ class Elections(object):
             elif regressionType == 'OLS':
                 regression = linear_model.LinearRegression(normalize=True)
             regression.fit(X_train, Y_train)
+            print (regression.coef_)
             weights = regression.coef_
             log.debug("weights(" + candidate + "-->)" + str(weights) + "\n")
             # make prediction using weights learnt

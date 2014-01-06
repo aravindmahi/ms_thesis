@@ -5,22 +5,22 @@ from __future__ import division
 
 __author__ = 'Aravindan Mahendiran'
 __email__ = 'aravind@vt.edu'
-__version__ = "5.2.0"
-__processor__ = "UniqueVisitorElectionModel"
+__version__ = "6.3.1"
+__processor__ = "RegressionElectionModel"
 
 import sys
 import os
 import re
 import json
 import boto
-from datetime import datetime
+from datetime import datetime, timedelta
 from embers.utils import normalize_str
 from etool import logs, args, message
-
 path = "/home/aravindan/Dropbox/git/geocoding/twitter"
 if path not in sys.path:
     sys.path.insert(1, path)
 from embers.geocode import Geo
+from sklearn import linear_model
 
 log = logs.getLogger(__processor__)
 
@@ -48,19 +48,11 @@ class Elections(object):
     """
     Class to count candidate mentions from twitter and predict election winner
     """
-    def __init__(self, inputFolder, scoresFolder, configFile, fromDate, toDate, pslFlag, pslVocab):
+    def __init__(self, inputFolder, scoresFolder, configFile, fromDate, toDate):
         log.info("initializing")
         self.configJson = None
         with open(configFile, "r") as f:
             self.configJson = json.loads(f.read())
-
-        if pslFlag == '1':
-            for cand in self.configJson['candidates']:
-                self.configJson['candidates'][cand]['alias'] = []
-            with open(pslVocab, 'r') as file:
-                for line in file:
-                    word, candidate = line.strip().split(',')
-                    self.configJson['candidates'][candidate]['alias'].append(word)
 
         self.country = self.configJson["country"]
         self.state = self.configJson["state"]
@@ -88,7 +80,8 @@ class Elections(object):
         log.debug("processing the config file")
         candidatesJson, aliasJson = {}, {}
         for candidate in self.configJson["candidates"]:
-            candidatesJson[candidate] = self.configJson["candidates"][candidate]
+            if "polls" in self.configJson["candidates"][candidate]:
+                candidatesJson[candidate] = self.configJson["candidates"][candidate]
         for candidate in candidatesJson:
             for alias in candidatesJson[candidate]["alias"]:
                 if alias.lower() in aliasJson:
@@ -143,70 +136,272 @@ class Elections(object):
             f.write(json.dumps(self.tweetList))
         return
 
+    def getStatistics(self, fromDate, toDate):
+        log.info("calculating statistics")
+        fromDate = datetime.strptime(fromDate, "%d %b %Y")
+        toDate = datetime.strptime(toDate, "%d %b %Y")
+        self.statistics = {}
+        for candidate in self.candidatesJson:
+            self.statistics[candidate] = {}
+            vol_total, vol_pos, vol_neg, vol_neutral = [0] * 4
+            user_total, user_pos, user_neg, user_neutral = [0] * 4
+            klout_total, klout_neutral, klout_pos, klout_neg = [0] * 4
+            for user in self.scoreCard[candidate]:
+                userInWindow = False
+                this_user_pos, this_user_neg, this_user_neutral = [0] * 3
+                for datestr in self.scoreCard[candidate][user]:
+                    date = datetime.strptime(datestr, "%d %b %Y")
+                    if date >= fromDate and date <= toDate:
+                        userInWindow = True
+                        for tuple in self.scoreCard[candidate][user][datestr]:
+                            k, s = tuple
+                            vol_total += 1
+                            if s < 0:
+                                vol_neg += 1
+                                this_user_neg += 1
+                            elif s == 0:
+                                vol_neutral += 1
+                                this_user_neutral += 1
+                            else:
+                                vol_pos += 1
+                                this_user_pos += 1
+                if userInWindow and this_user_pos > this_user_neg and this_user_pos > this_user_neutral:
+                    user_pos += 1
+                    user_total += 1
+                    klout_total += k
+                    klout_pos += k
+                elif userInWindow and this_user_neg > this_user_pos and this_user_neg > this_user_neutral:
+                    user_neg += 1
+                    user_total += 1
+                    klout_total += k
+                    klout_neg += k
+                elif userInWindow and this_user_pos == this_user_neg:
+                    user_neutral += 1
+                    user_total += 1
+                    klout_total += k
+                    klout_neutral += k
+
+            self.statistics[candidate]["vol_total"] = vol_total
+            self.statistics[candidate]["vol_neg"] = vol_neg
+            self.statistics[candidate]["vol_pos"] = vol_pos
+            self.statistics[candidate]["vol_neutral"] = vol_neutral
+
+            self.statistics[candidate]["user_total"] = user_total
+            self.statistics[candidate]["user_neg"] = user_neg
+            self.statistics[candidate]["user_pos"] = user_pos
+            self.statistics[candidate]["user_neutral"] = user_neutral
+
+            self.statistics[candidate]["klout_total"] = klout_total
+            self.statistics[candidate]["klout_neutral"] = klout_neutral
+            self.statistics[candidate]["klout_neg"] = klout_neg
+            self.statistics[candidate]["klout_pos"] = klout_pos
+        return
+
+    def storeStatistics(self, fromDate, toDate):
+        self.getStatistics(fromDate, toDate)
+        log.info("storing statistics")
+        with open(self.scoresFolder + "/" + self.country + "_statistics.csv", "w") as f:
+            f.write("Candidate,vol_total,vol_neg,vol_pos,vol_neutral,users_total,users_neg,users_pos,users_neutral\n")
+            for candidate in self.statistics:
+                f.write(candidate + "," + str(self.statistics[candidate]["vol_total"]) + "," +
+                        str(self.statistics[candidate]["vol_neg"]) + "," +
+                        str(self.statistics[candidate]["vol_pos"]) + "," +
+                        str(self.statistics[candidate]["vol_neutral"]) + "," +
+                        str(self.statistics[candidate]["user_total"]) + "," +
+                        str(self.statistics[candidate]["user_neg"]) + "," +
+                        str(self.statistics[candidate]["user_pos"]) + "," +
+                        str(self.statistics[candidate]["user_neutral"]) + "\n")
+                log.info("statistics written")
+        return
+
+    def getRegressionFeaturesForDateRange(self, fromDate, toDate):
+        """ populating the features for regression"""
+        self.getStatistics(fromDate, toDate)
+        log.debug("inside getRegressionFeaturesForDateRange")
+
+        self.shareOfVolume = {}
+        self.shareOfVolume["mentions"] = {}
+        self.shareOfVolume["mentions"]["neutral"] = {}
+        self.shareOfVolume["mentions"]["positive"] = {}
+        self.shareOfVolume["mentions"]["negative"] = {}
+        self.shareOfVolume["users"] = {}
+        self.shareOfVolume["users"]["neutral"] = {}
+        self.shareOfVolume["users"]["positive"] = {}
+        self.shareOfVolume["users"]["negative"] = {}
+        self.shareOfVolume["klout"] = {}
+        self.shareOfVolume["klout"]["neutral"] = {}
+        self.shareOfVolume["klout"]["positive"] = {}
+        self.shareOfVolume["klout"]["negative"] = {}
+        neutral_mentions, pos_mentions, neg_mentions = [1] * 3
+        neutral_users, pos_users, neg_users = [1] * 3
+        neutral_klout, pos_klout, neg_klout = [1] * 3
+
+        for candidate in self.statistics:
+            neutral_mentions += self.statistics[candidate]["vol_neutral"]
+            pos_mentions += self.statistics[candidate]["vol_pos"]
+            neg_mentions += self.statistics[candidate]["vol_neg"]
+
+            neutral_users += self.statistics[candidate]["user_neutral"]
+            pos_users += self.statistics[candidate]["user_pos"]
+            neg_users += self.statistics[candidate]["user_neg"]
+
+            neutral_klout += self.statistics[candidate]["klout_neutral"]
+            pos_klout += self.statistics[candidate]["klout_pos"]
+            neg_klout += self.statistics[candidate]["klout_neg"]
+
+        for candidate in self.statistics:
+            self.shareOfVolume["mentions"]["neutral"][candidate] = self.statistics[candidate]["vol_neutral"] / neutral_mentions * 100
+            self.shareOfVolume["mentions"]["positive"][candidate] = self.statistics[candidate]["vol_pos"] / pos_mentions * 100
+            self.shareOfVolume["mentions"]["negative"][candidate] = self.statistics[candidate]["vol_neg"] / neg_mentions * 100
+
+            self.shareOfVolume["users"]["neutral"][candidate] = self.statistics[candidate]["user_neutral"] / neutral_users * 100
+            self.shareOfVolume["users"]["positive"][candidate] = self.statistics[candidate]["user_pos"] / pos_users * 100
+            self.shareOfVolume["users"]["negative"][candidate] = self.statistics[candidate]["user_neg"] / neg_users * 100
+
+            self.shareOfVolume["klout"]["neutral"][candidate] = self.statistics[candidate]["klout_neutral"] / neutral_klout * 100
+            self.shareOfVolume["klout"]["negative"][candidate] = self.statistics[candidate]["klout_neg"] / neg_klout * 100
+            self.shareOfVolume["klout"]["positive"][candidate] = self.statistics[candidate]["klout_pos"] / pos_klout * 100
+
+        self.getShareOfSentiment(fromDate, toDate)
+
+        return
+
+    def getShareOfSentiment(self, fromDate, toDate):
+        """scale the overall sentiment of the candidate to [0,1]"""
+
+        log.debug("calculating share(sentiment) for regression feature")
+        fromDate = datetime.strptime(fromDate, "%d %b %Y")
+        toDate = datetime.strptime(toDate, "%d %b %Y")
+        sentiment = {}
+        for candidate in self.candidatesJson:
+            sentiment[candidate] = 0
+            for user in self.scoreCard[candidate]:
+                for datestr in self.scoreCard[candidate][user]:
+                    date = datetime.strptime(datestr, "%d %b %Y")
+                    if date >= fromDate and date <= toDate:
+                        for k, s in self.scoreCard[candidate][user][datestr]:
+                            sentiment[candidate] += s
+
+        max_sent, min_sent = 0, 0
+        for candidate in self.candidatesJson:
+            sent = sentiment[candidate]
+            if sent < min_sent:
+                min_sent = sent
+            if sent > max_sent:
+                max_sent = sent
+
+        oldMin, oldMax = min_sent, max_sent
+        oldRange = oldMax - oldMin
+        if oldRange == 0:   # to avoid divide by zero exception
+            oldRange = 1
+        newMin, newMax = -100, 100
+        newRange = newMax - newMin
+
+        self.shareOfVolume["sentiment"] = {}
+        for candidate in self.candidatesJson:
+            self.shareOfVolume["sentiment"][candidate] = (((sentiment[candidate] - oldMin) * newRange) / oldRange) + newMin
+        return
+
     def normalizeScores(self, scoreList):
         summation = 0
         for candidate in scoreList:
             summation += scoreList[candidate]
-        for candidate in scoreList:
-            scoreList[candidate] = scoreList[candidate] / summation * 100
+        if summation > 100:
+            for candidate in scoreList:
+                scoreList[candidate] = scoreList[candidate] / summation * 100
         return scoreList
 
-    def getBestTweeterTuple(self, tweeterJson):
-        bestSentiment = 1
-        for date in tweeterJson:
-            for tuple in tweeterJson[date]:
-                klout, sentiment = tuple
-                if sentiment > bestSentiment:
-                    bestSentiment = sentiment
-        return (klout, bestSentiment)
-
-    def getAvgTweeterTuple(self, tweeterJson, fromDate, toDate):
-        count = 0
-        sumSentiment = 0
-        fromDate = datetime.strptime(fromDate, "%d %b %Y")
-        toDate = datetime.strptime(toDate, "%d %b %Y")
-        klout, avgSentiment = 0, 0
-        for dateStr in tweeterJson:
-            date = datetime.strptime(dateStr, "%d %b %Y")
-            if (date >= fromDate and date <= toDate):
-                for klout, sentiment in tweeterJson[dateStr]:
-                    sumSentiment += sentiment
-                    count += 1
-        if count == 0:
-            avgSentiment = sumSentiment / 1
-        else:
-            avgSentiment = sumSentiment / count
-        return(klout, avgSentiment)
-
-    def getFinalScores(self, fromDate, toDate):
-        finalScore = {}
-        for candidate in self.candidatesJson:
-            sumScore = 1
-            for tweeterId in self.scoreCard[candidate]:
-                klout, sentiment = self.getAvgTweeterTuple(self.scoreCard[candidate][tweeterId], fromDate, toDate)
-                sumScore += klout * scaleSentiment(sentiment)
-            finalScore[candidate] = self.candidatesJson[candidate]["weight"] * sumScore
-            #finalScore[candidate] = sumScore
-            if self.candidatesJson[candidate]['incumbent'] == 'Y':
-                finalScore[candidate] = 1.10 * finalScore[candidate]
-        return finalScore
-
-    def getWinner(self, fromDate, toDate):
-        finalScores = self.getFinalScores(fromDate, toDate)
+    def getWinner(self, fromDateStr, toDateStr, regressionType):
+        winner, winningScore = None, 0
+        runnerUp, runnerUpScore = None, 0
+        dateList, finalScores = self.getRegressionResults(fromDateStr, toDateStr, regressionType)
         finalScores = self.normalizeScores(finalScores)
-        winningScore, runnerUpScore = 0, 0
-        winner, runnerUp = None, None
         for candidate in finalScores:
             if finalScores[candidate] > winningScore:
                 winningScore = finalScores[candidate]
                 winner = candidate
-        #for runOff elections
         for candidate in finalScores:
             if candidate != winner and finalScores[candidate] >= runnerUpScore:
                 runnerUpScore = finalScores[candidate]
                 runnerUp = candidate
-        log.info("finalScore-->\n%s" % finalScores)
         return winner, winningScore, runnerUp, runnerUpScore, finalScores
+
+    def getRegressionResults(self, fromDateStr, toDateStr, regressionType='OLS'):
+        regressionResults = {}
+        fromDate = datetime.strptime(fromDateStr, "%d %b %Y")
+        toDate = datetime.strptime(toDateStr, "%d %b %Y")
+        # populate regression space for each candidate and get prediction
+        for candidate in self.candidatesJson:
+            print candidate
+            dateList = self.candidatesJson[candidate]["polls"].keys()
+            # removing data points that are outside the range
+            for dateStr in dateList:
+                date = datetime.strptime(dateStr, "%d %b %Y")
+                if date <= fromDate or date >= toDate:
+                    dateList.remove(dateStr)
+            # sorting the data points according to date
+            dateList = sorted(dateList, key=lambda x: datetime.strptime(x, "%d %b %Y"))
+
+            Y_train = []  # Y is dependant variable ie list of pollingData sorted by dates
+            X_train = []  # X is independent variable feature set
+            for dateStr in dateList:
+                Y_train.append(self.candidatesJson[candidate]["polls"][dateStr])
+                x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11 = [0] * 12  # individual feature vectors
+                localFromDateStr, localToDateStr = None, dateStr
+                localToDate = datetime.strptime(dateStr, "%d %b %Y")
+                localFromDate = localToDate - timedelta(days=10)
+                localFromDateStr = localFromDate.strftime("%d %b %Y")
+                self.getRegressionFeaturesForDateRange(localFromDateStr, localToDateStr)
+                x0 = 1
+                x1 = self.shareOfVolume["users"]["neutral"][candidate]
+                x2 = self.shareOfVolume["users"]["positive"][candidate]
+                x3 = self.shareOfVolume["users"]["negative"][candidate]
+                x4 = self.shareOfVolume["mentions"]["neutral"][candidate]
+                x5 = self.shareOfVolume["mentions"]["positive"][candidate]
+                x6 = self.shareOfVolume["mentions"]["negative"][candidate]
+                x7 = self.shareOfVolume["klout"]["neutral"][candidate]
+                x8 = self.shareOfVolume["klout"]["positive"][candidate]
+                x9 = self.shareOfVolume["klout"]["negative"][candidate]
+                x10 = self.shareOfVolume["sentiment"][candidate]
+                if self.candidatesJson[candidate]["incumbent"] == "Y":
+                    x11 = 1
+                X_train.append([x0, x2, x3, x5, x6, x10, x11])
+            log.debug("featureSpace(" + candidate + "-->" + str(X_train))
+            # perform the regression fit
+            regression = None
+            if regressionType == 'LASSO':
+                regression = linear_model.Lasso(alpha=0.1, normalize=True)
+            elif regressionType == 'OLS':
+                regression = linear_model.LinearRegression(normalize=True)
+            regression.fit(X_train, Y_train)
+            print (regression.coef_)
+            weights = regression.coef_
+            log.debug("weights(" + candidate + "-->)" + str(weights) + "\n")
+            # make prediction using weights learnt
+            X_predict = []
+            x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11 = [0] * 12  # individual feature vectors
+            self.getRegressionFeaturesForDateRange(fromDateStr, toDateStr)
+            x0 = 1
+            x1 = self.shareOfVolume["users"]["neutral"][candidate]
+            x2 = self.shareOfVolume["users"]["positive"][candidate]
+            x3 = self.shareOfVolume["users"]["negative"][candidate]
+            x4 = self.shareOfVolume["mentions"]["neutral"][candidate]
+            x5 = self.shareOfVolume["mentions"]["positive"][candidate]
+            x6 = self.shareOfVolume["mentions"]["negative"][candidate]
+            x7 = self.shareOfVolume["klout"]["neutral"][candidate]
+            x8 = self.shareOfVolume["klout"]["positive"][candidate]
+            x9 = self.shareOfVolume["klout"]["negative"][candidate]
+            x10 = self.shareOfVolume["sentiment"][candidate]
+            if self.candidatesJson[candidate]["incumbent"] == "Y":
+                x11 = 1
+            X_predict.append([x0, x2, x3, x5, x6, x10, x11])
+            regressionResults[candidate] = regression.predict(X_predict)[0]
+            # handling value out of bounds
+            if regressionResults[candidate] < 0:
+                regressionResults[candidate] = 0
+            if regressionResults[candidate] > 100:
+                regressionResults[candidate] = 100
+        return dateList, regressionResults
 
     def processTweet(self, jsonTweet):
         try:
@@ -234,7 +429,7 @@ class Elections(object):
             fileDate = datetime.strptime(_file[17:27], "%Y-%m-%d")
             if(fileDate > self.toDate or fileDate < self.fromDate):
                 continue
-            log.info("processing file %d/%d-->%s" % (fileCount, totalFiles, _file))
+            log.debug("processing file %d/%d-->%s" % (fileCount, totalFiles, _file))
             fileCount += 1
             try:
                 with open(self.inputFolder + "/" + _file, "r") as FILE:
@@ -278,7 +473,7 @@ class Elections(object):
                                                 self.state.title(),
                                                 self.city.title()]
         surrogate["derivedFrom"]["source"] = "Raw Twitter feed from DataSift and election config Files."
-        surrogate["derivedFrom"]["comments"] = "tweets were filtered by (country,state,city) and then by those containing the terms of candidates"
+        surrogate["derivedFrom"]["comments"] = "tweets were filtered by country then state and then by those containing the terms of candidates"
         surrogate["derivedFrom"]["model"] = __processor__
         surrogate["confidence"] = 1.00
         surrogate["confidenceIsProbability"] = True
@@ -327,7 +522,7 @@ class Elections(object):
             electionType = self.electionType
         warning["eventType"] = ["Vote", "Election", electionType.title()]
         warning["confidence"] = round(winningScore / 100, 2)  # in cases of very close run races
-        #warning["confidence"] = 1.00
+        # warning["confidence"] = 1.00
         warning["confidenceIsProbability"] = True
         warning["eventDate"] = self.electionDate
         warning["population"] = winner.title()
@@ -335,7 +530,7 @@ class Elections(object):
                                self.city.title()]
         comment = "Winner: " + winner + " Score: " + str(winningScore) + " Runner-Up: " + runnerUp + " Score: " + str(runnerUpScore)
         if self.runOff == 'Y':
-            comment = "Election going to 2nd Round with: " + winner + " and " + runnerUp
+            comment = "Elections going to 2nd round with candidates: " + winner + ' and ' + runnerUp
         warning["comments"] = comment
         warning['eventCode'] = '02'
         if self.electionType == 'mayor':
@@ -387,27 +582,26 @@ def main():
                     default='/hdd/tweets/2012/may')
     ap.add_argument('-s', '--scoresFolder', type=str,
                     help='Folder contaning scoreCards',
-                    default='../data/scores/')
+                    default='../data/scores/MX/')
     ap.add_argument('-cf', '--configFile', type=str,
                     help='election configuration file',
-                    default='./configFiles/electionConfig_MX')
-    ap.add_argument('-d1', '--fromDate', help='fromDate')
-    ap.add_argument('-d2', '--toDate', help='toDate')
+                    default='../configFiles/electionConfig_MX')
+    ap.add_argument('-d1', '--fromDate', type=str,
+                    help='fromDate')
+    ap.add_argument('-d2', '--toDate', type=str,
+                    help='toDate')
     ap.add_argument('-f1', '--flag1', help="countOrPredict",
                     type=str, default='2')
-    ap.add_argument('-f2', '--flag2', help="flag to push the warnings to S3",
+    ap.add_argument('-r', '--regression', help="regressionType",
+                    type=str, default='LASSO')
+    ap.add_argument('-f2', '--flag2', help="flag to push surrogates and warning to S3",
                     type=str, default='0')
-    ap.add_argument('-pf', '--pslFlag', help="flag to use PSL vocab",
-                    type=str, default='0')
-    ap.add_argument('-pv', '--pslVocab', help="pslVocabulary file",
-                    type=str, default='../pslVocab/venezuela.csv')
-
     arg = ap.parse_args()
     logs.init(arg)
 
     try:
         elections = Elections(arg.inputFolder, arg.scoresFolder,
-                              arg.configFile, arg.fromDate, arg.toDate, arg.pslFlag, arg.pslVocab)
+                              arg.configFile, arg.fromDate, arg.toDate)
         log.info("Election class initialized")
     except Exception as e:
         log.exception("exception during intialization: %s. Quitting!!", e)
@@ -420,11 +614,11 @@ def main():
 
     try:
         if (arg.flag1 == '2' or arg.flag1 == '3'):
-            winner, winningScore, runnerUp, runnerUpScore, finalScore = elections.getWinner(arg.fromDate, arg.toDate)
-            print "---------Results using Unique Visitor Model----------------------------------------------"
+            winner, winningScore, runnerUp, runnerUpScore, finalScore = elections.getWinner(arg.fromDate, arg.toDate, arg.regression)
+            print "------------Regression Results-----------"
             print finalScore
-            print winner + "--->" + str(winningScore)
-            print "-------------------------------------------------------------------------------"
+            print winner + "====>" + str(winningScore)
+            print "-----------------------------------------"
     except Exception as e:
         log.exception("error while calculating winner:%s", e)
 
@@ -432,6 +626,12 @@ def main():
         elections.createSurrogate(winner, winningScore, runnerUp, runnerUpScore, arg.flag2)
     except Exception as e:
         log.exception("error during creating warnings")
+
+    try:
+        if (arg.flag2 == '1'):
+            elections.storeStatistics(arg.fromDate, arg.toDate)
+    except Exception as e:
+        log.exception("error in storing statistics:%s", e)
 
     log.info("ALL Operations Complete")
 
