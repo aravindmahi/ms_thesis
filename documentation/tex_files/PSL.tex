@@ -101,7 +101,8 @@ The initial pre-processing starts with the tweet input stream which is filtered 
 For each election, tweets from a month leading up to the election were used.
 After extensive analysis it was determined that the most optimal window size was three days. 
 Smaller window sizes resulted in sub-optimal inferences as there were not enough data points feeding into the PSL stage.
-Larger window sizes lead to memory issues as the PSL optimization has a time complexity of  $O(n^{3.5})$ where $n$ is the number of relevant rule groundings, i.e., those with non-zero distance to satisfaction. 
+Larger window sizes lead to memory issues as the PSL optimization procedure generates rules by substituting groundings of all possible combinations for the random variables in the rules defined.
+Therefore, with large number of tweets feeding into the inference process the number of rules generated explodes and causing memory issues during optimization. 
 The tweets passing the date filter are then geo-coded using a geo-location algorithm that infers the location of a tweet. 
 This ensures that only tweets originating from the country of interest are used.
 The geo-location algorithm tags the tweets with a location by looking at the GPS coordinates of the tweet if available or landmarks and locations mentioned in the tweet or author's profile. 

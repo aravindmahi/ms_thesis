@@ -18,11 +18,9 @@
 \setlength{\topmargin}{0in}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.1in}
-% Uncomment for double-spaced document.
-% \renewcommand{\baselinestretch}{2}
-% \usepackage{epsf}
 %--------packages I used----------------------------
 \usepackage{verbatim}
+\usepackage{multirow}
 \usepackage{latexsym}
 \usepackage{amsmath, amsfonts, amssymb}
 \usepackage{graphicx}
@@ -105,7 +103,7 @@ builds a dynamic vocabulary using Probabilistic Soft Logic (PSL), a framework fo
 relational domains. Using eight presidential elections from Latin America, we show how our query expansion methodology 
 improves the performance of traditional election forecasting algorithms. 
 Through this approach we demonstrate how we can achieve close to a two-fold increase in the number of tweets
-retrieved for predictions and a 15.58\% reduction in prediction error. 
+retrieved for predictions and a 36.90\% reduction in prediction error. 
 \pagebreak
 
 % Dedication and Acknowledgments are both optional
@@ -137,51 +135,14 @@ I would like to thank my fellow graduate students Nabeel Mohammed, Rupinder Paul
 \pagenumbering{arabic}
 \pagestyle{myheadings}
 
-%\doublespacing
-
-
 \input{tex_files/Introduction.tex}
 \input{tex_files/PSL.tex}
 \input{tex_files/Prediction_Models.tex}
 \input{tex_files/Results.tex}
 \input{tex_files/Conclusions_FutureWork.tex}
 
-%%%%%%%%%%%%%%%%%
-%
-% Include an EPS figure with this command:
-%   \epsffile{filename.eps}
-%
-
-%%%%%%%%%%%%%%%%
-%
-% Do tables like this:
-
-%  \begin{table}
-%  \caption{The Graduate School wants captions above the tables.}
-% \begin{center}
-%  \begin{tabular}{ccc}
-%  x & 1 & 2 \\ \hline
-%  1 & 1 & 2 \\
-%  2 & 2 & 4 \\ \hline
-%  \end{tabular}
-% \end{center}
-%  \end{table}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% If you are using BibTeX, uncomment the following:
-% \thebibliography
-%
-% Otherwise, uncomment the following:
-% \chapter*{Bibliography}
-
-% \appendix
-
-% In LaTeX, each appendix is a "chapter"
-% \chapter{Program Source}
-
 \cleardoublepage
-%\phantomsection
+
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliographystyle{IEEEtran}
 \markright{Aravindan Mahendiran \hfill References \hfill}
