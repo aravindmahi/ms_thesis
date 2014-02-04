@@ -1,22 +1,24 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {2.1}{\ignorespaces Design of the query expansion pipeline.\relax }}{12}
-\contentsline {figure}{\numberline {2.2}{\ignorespaces Vocabulary growth with each iteration.\relax }}{14}
-\contentsline {figure}{\numberline {2.3}{\ignorespaces Evolution of hashtags for Henrique Capriles\relax }}{16}
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Day 0}}}{16}
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Day 6}}}{16}
-\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Day 15}}}{16}
-\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Day 30}}}{16}
-\contentsline {figure}{\numberline {2.4}{\ignorespaces Time series comparison for different hashtags identified for Hugo Chavez.\relax }}{17}
-\contentsline {figure}{\numberline {2.5}{\ignorespaces Hashtags identified for Michelle Bachelet\relax }}{18}
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Nov 24}}}{18}
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Dec 15}}}{18}
-\contentsline {figure}{\numberline {2.6}{\ignorespaces Vocabulary of hashtags identified for different elections\relax }}{19}
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Mexico}}}{19}
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Paraguay}}}{19}
-\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Honduras}}}{19}
-\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Ecuador}}}{19}
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Design of the query expansion pipeline.\relax }}{9}
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Vocabulary growth with each iteration.\relax }}{12}
+\contentsline {figure}{\numberline {2.3}{\ignorespaces Evolution of hashtags for Henrique Capriles\relax }}{13}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Day 0}}}{13}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Day 6}}}{13}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Day 15}}}{13}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Day 30}}}{13}
+\contentsline {figure}{\numberline {2.4}{\ignorespaces Time series comparison for different hashtags identified for Hugo Cha\'{a}vez.\relax }}{14}
+\contentsline {figure}{\numberline {2.5}{\ignorespaces Hashtags identified for Michelle Bachelet\relax }}{15}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Nov 24}}}{15}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Dec 15}}}{15}
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Vocabulary of hashtags identified for different elections\relax }}{17}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Mexico}}}{17}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Paraguay}}}{17}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Honduras}}}{17}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Ecuador}}}{17}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces Recall of seed vocabulary vs PSL vocabulary\relax }}{26}
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Recall of seed vocabulary vs PSL vocabulary\relax }}{23}
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Prediction Error for Unique Visitor Model over time\relax }}{25}
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Prediction Error for Regression Model over time\relax }}{25}
 \addvspace {10\p@ }

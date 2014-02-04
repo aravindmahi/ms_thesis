@@ -15,45 +15,45 @@ Warning--empty journal in bermingham2011using
 Warning--empty journal in bach2010decision
 
 Done.
-You've used 25 entries,
+You've used 27 entries,
             4024 wiz_defined-function locations,
-            921 strings with 12088 characters,
-and the built_in function-call counts, 17223 in all, are:
-= -- 1302
-> -- 428
-< -- 114
-+ -- 230
-- -- 81
-* -- 798
-:= -- 2571
-add.period$ -- 56
-call.type$ -- 25
-change.case$ -- 25
+            931 strings with 12458 characters,
+and the built_in function-call counts, 18202 in all, are:
+= -- 1368
+> -- 457
+< -- 115
++ -- 244
+- -- 88
+* -- 841
+:= -- 2725
+add.period$ -- 60
+call.type$ -- 27
+change.case$ -- 26
 chr.to.int$ -- 282
-cite$ -- 27
-duplicate$ -- 1298
-empty$ -- 1577
-format.name$ -- 104
-if$ -- 3984
+cite$ -- 29
+duplicate$ -- 1378
+empty$ -- 1688
+format.name$ -- 113
+if$ -- 4211
 int.to.chr$ -- 0
-int.to.str$ -- 25
-missing$ -- 233
-newline$ -- 98
-num.names$ -- 25
-pop$ -- 514
+int.to.str$ -- 27
+missing$ -- 251
+newline$ -- 104
+num.names$ -- 27
+pop$ -- 557
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 2
-skip$ -- 1411
+skip$ -- 1498
 stack$ -- 0
-substring$ -- 683
-swap$ -- 933
-text.length$ -- 20
+substring$ -- 684
+swap$ -- 980
+text.length$ -- 21
 text.prefix$ -- 0
 top$ -- 5
-type$ -- 25
+type$ -- 27
 warning$ -- 2
-while$ -- 77
-width$ -- 27
-write$ -- 240
+while$ -- 79
+width$ -- 29
+write$ -- 256
 (There were 2 warnings)

@@ -8,6 +8,7 @@ We dub this as  \emph{``unique visitor model"} and is adapted from \cite{saez201
 The second model uses a regression fit to regress from tweet features to opinion polls and then predicts election. 
 We dub this model as the \emph{``regression model"} and this approach
 is adapted from \cite{bermingham2011using} and \cite{o2010tweets}.
+Specifically, we borrowed the idea of a regression fit with opinion polls and tweet features but use many more features compared to the ones detailed in these publications. 
 
 \section{Unique Visitor Model}
 The assumption here is that
@@ -23,15 +24,12 @@ We use the sentiment scores provided as a part of the meta-data of the tweet.
 The sentiment scores typically fall in the range of $[-15,15]$ and are provided by Lexalytics.
 Once a time series of the Klout and sentiment scores are built, we calculate the absolute popularity 
 of a candidate $C_d$ as:
-
 \begin{equation}
-{C_d} = \sum_i K_i * UCS_{id}
+{C_d} = \sum_{i \in \textrm{Users}} K_i \times UCS_{id}
 \end{equation}
-
-where $K_i$ is the Klout score for user $i$, and $UCS_{id}$ is User Candidate Score, the average of sentiment scores for all tweets from user $i$ about candidate $d$.
+where $K_i$ is the Klout score for user $i$ and $UCS_{id}$ is User Candidate Score, the average of sentiment scores for all tweets from user $i$ about candidate $d$.
 We then normalize the popularity scores across all candidates so that they sum to $1$.
 This gives us the relative popularity of each candidate $P_d$ using which we predict the elections.
-
 \begin{equation}
 {P_d} = \sum_i \frac{C_d}{C_i}
 \end{equation}
@@ -51,18 +49,14 @@ can be mitigated.
 We use a total of six features based on: Klout scores, number of unique users, total number of mentions, sentiment and incumbency.
 We normalize each of these features across all candidates to obtain the relative share of the volume. 
 For example we define share of positive mentions ($SoPM$)  as: 
-
 \begin{equation}
 SoPM(x) = \frac{\#PositiveMentions(x)}{\sum_i \#PositiveMentions(i)} 
 \end{equation}
-
 and share of negative users ($SoNU$) as:
-
 \begin{equation}
-SoNU(x) = \frac{\sum_j K_j}{\sum_i \sum_j K_j}
+SoNU(x) = \frac{\sum_j K_{jx}}{\sum_i \sum_j K_{ji}}
 \end{equation}
-
-where $K_j$ is the Klout score of user $j$ who tweeted negatively about a candidate.
+where $K_{jx}$ is the Klout score of user $j$ who tweeted negatively about a candidate $x$.
 Similarly, we define share of sentiment ($SoS$) as the sum of all sentiment scores normalized across all candidates. 
 We use a binary variable for incumbency. 
 We then build a timeline of opinion polls. 
@@ -70,7 +64,6 @@ For each of the polling dates we calculate these features by using tweets create
 leading up to the polling date.
 When we have more than one polling house publishing its opinion poll (for the same date) we take the average of the polls. 
 Once we create a feature set for all the polling dates, we fit a simple least square regression as:
-
 \begin{equation}
 \begin{split}
 Popularity(x) = \alpha_1 * SoPM(x) + \alpha_2 * SoNM(x) \\
@@ -82,28 +75,27 @@ Popularity(x) = \alpha_1 * SoPM(x) + \alpha_2 * SoNM(x) \\
 Table~\ref{table:coeff} details the coefficients learned for each feature averaged over all the candidates from all the elections.
 The values confirm our hypothesis that the number of unique users and sentiment have more predictive power than total number of mentions.
 Intuitively it is also seen that the coefficients for share of negative users and negative mentions carry a negative weight.
-Another interesting observation is the fact that the incumbency binary variable is not as predictive which is 
-contradictory to established understanding.
-
+Another interesting observation is the fact that the incumbency binary variable is not as predictive which could be
+due to a confounding effect with other features. 
 \begin{table*}
         \centering
         \begin{tabular}{|l|r|}
         \hline
         Feature & Coefficient Value\\
         \hline
-        $SoPU$ & 0.4622\\
-        $SoNU$ & -0.443\\
-        $SoPM$ & 0.1158\\
-        $SoNM$ & -0.065\\
-        $SoS$ & 0.156\\
-        $Incumbency$ & 0.0\\
+        \textrm{SoPU} & 0.4622\\
+        \textrm{SoNU} & -0.443\\
+        \textrm{SoPM} &  0.1158\\
+        \textrm{SoNM} &  -0.065\\
+        \textrm{SoS} & 0.156\\
+        \textrm{Incumbency} & 0.0\\
         \hline
         \end{tabular}
         \caption{Regression coefficients learned for features}
         \label{table:coeff}
 \end{table*}
-
-After learning the regression fit, we make a prediction by building such features using the same 10 day window leading up to the prediction date.
+Having learnt a regression fit, we forecast the election
+by using features in the 10 day window leading upto the prediction date.
 
 \section{Performance}
 \begin{table*}
@@ -131,7 +123,7 @@ Only tweets from the locations pertaining to elections were used to make the pre
 For example, for the Rio De Janeiro Mayor elections only tweets from the city of Rio De Janeiro were used and similarly for state level Governor elections only tweets originating from that particular state were used.
 Once the tweets were filtered by location the time series of Klout and sentiment scores were calculated by tracking the tweets for the mentions of candidate.
 
-Table~\ref{table:trackRecord} shows the overall performance of the two models. 
+Table~\ref{table:trackRecord} shows the overall performance of the two models.
 It can be noticed that the accuracy drops as the granularity of the elections increases. 
 This is primarily due to the fact that opinion polls were available only for the country level elections.
 Therefore, we could not use the Regression Model for the state or city level elections.
@@ -139,4 +131,5 @@ This increased the error as the predictions were generated only from the naive U
 Also, from the tweets collected it was noticed that there wasn't much chatter on Twitter about 
 smaller, local, elections.
 This skewed the results as the model tracking the names of the candidates was not as accurate as desirable.
+For the presidential elections, both the Unique Visitor Model and the Regression Model predicted the winners for all elections correctly but differed only in the predicted share of votes.
 If the city level elections were ignored as outliers the overall accuracy of the models improves to 91.6\%.

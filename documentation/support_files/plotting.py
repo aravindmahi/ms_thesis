@@ -17,7 +17,9 @@ plt.grid('on')
 plt.legend(loc='lower right')
 plt.savefig('./WordGrowth.png')
 print '.....wordGrowth plotted'
+'''
 ####################################################################################
+'''
 # recall
 N = 8
 ind = np.arange(N)
@@ -31,7 +33,7 @@ rects1 = ax.bar(ind, seed, width, color='r')
 rects2 = ax.bar(ind + width, psl, width, color='b')
 
 ax.set_xlabel('Elections')
-ax.set_ylabel('Number of tweets used for prediction')
+ax.set_ylabel('Tweets used for prediction')
 ax.set_xticks(ind + width)
 ax.set_xticklabels(('MX', 'VE_oct7', 'EC', 'VE_apr15', 'PY', 'CL_nov17', 'HN', 'CL_Dec15'))
 plt.grid('on')
@@ -40,10 +42,11 @@ plt.savefig('./Recall.png')
 print '....recall plotted'
 '''
 ########################################################################################
+'''
 # hashTag time seriers
 x_axis = np.arange(0, 11, 1)
 #elmundoconchavez
-word1 = np.array([0, 0.851, 0.821, 0.76543, 0.743, 0.8156, 0.7153, 0.740, 0.8193, 0.7789, 0.8056]) 
+word1 = np.array([0, 0.851, 0.821, 0.76543, 0.743, 0.8156, 0.7153, 0.740, 0.8193, 0.7789, 0.8056])
 #beatles
 word2 = np.array([0, 0.3145, 0.14, 0, 0, 0, 0, 0, 0, 0, 0])
 #facebook
@@ -62,22 +65,46 @@ plt313 = fig3.add_subplot(313)
 
 plt311.plot(x_axis, word1, 'r-', label='elmundoconchavez')
 plt311.plot(x_axis, word4, 'g-', label='univistaconchavez')
-plt311.set_ylim([0,1])
+plt311.set_ylim([0, 1])
 plt311.legend(bbox_to_anchor=(1.12, 0.3))
 
 plt312.plot(x_axis, word2, 'r-', label='beatles')
 plt312.plot(x_axis, word3, 'g-', label='facebook')
-plt312.set_ylim([0,1])
-plt312.set_xlim([0,10])
+plt312.set_ylim([0, 1])
+plt312.set_xlim([0, 10])
 plt312.legend(bbox_to_anchor=(1.12, 0.3))
 
 plt313.plot(x_axis, word5, 'r-', label='vivachavez oct_7')
 plt313.plot(x_axis, word6, 'g-', label='vivachavez apr_15')
-plt313.set_ylim([0,1])
+plt313.set_ylim([0, 1])
 plt313.legend(bbox_to_anchor=(1.12, 0.3))
 
-fig3.text(0.5, 0.04, 'iterations', ha='center', va='center')
-fig3.text(0.06, 0.5, 'hashTag weight', ha='center', va='center', rotation='vertical')
+fig3.text(0.5, 0.04, 'Iterations', ha='center', va='center')
+fig3.text(0.06, 0.5, 'Hashtag strength', ha='center', va='center', rotation='vertical')
 
 plt.savefig('./hashTagTimeSeries.png')
 print '.....hashTag Time Series Plotted'
+'''
+##########################################################################################
+#accuracy evolution
+x_axis = np.array([0, 4, 8, 10])
+uvm = np.array([8.1425, 15.33, 13.702, 8.82])
+uvmpsl = np.array([8.1425, 7.805, 7.37, 6.1365])
+rm = np.array([2.875, 2.895, 3.053, 3.81])
+rmpsl = np.array([2.875, 2.455, 2.765, 1.925])
+
+plt.figure(4)
+plt.plot(x_axis, uvm, 'r-', label='UVM+Seed', linewidth=2)
+plt.plot(x_axis, uvmpsl, 'b-', label='UVM+PSL', linewidth=2)
+plt.xlabel('Iterations')
+plt.ylabel('Average Prediction Error(%)')
+plt.legend(loc='upper right')
+plt.savefig('./UVMevolution.png')
+
+plt.figure(5)
+plt.plot(x_axis, rm, 'r-', label='UVM+Seed', linewidth=2)
+plt.plot(x_axis, rmpsl, 'b-', label='UVM+PSL', linewidth=2)
+plt.xlabel('Iterations')
+plt.ylabel('Average Prediction Error(%)')
+plt.legend(loc='lower right')
+plt.savefig('./RMevolution.png')

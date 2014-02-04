@@ -1,24 +1,35 @@
+%
 % PROJECT: <ETD> Electronic Thesis and Dissertation Initiative
 %   TITLE: LaTeX report template for ETDs in LaTeX
 %  AUTHOR: Neill Kipp, nkipp@vt.edu
 %     URL: http://etd.vt.edu/latex/
 % SAVE AS: etd.tex
 % REVISED: September 6, 1997 [GMc 8/30/10]
+%
 
 % Instructions: Remove the data from this document and replace it with your own,
 % keeping the style and formatting information intact.  More instructions
 % appear on the Web site listed above.
 
 %\documentclass[12pt,dvips]{report}
-\documentclass[11pt]{report}
+\documentclass[12pt]{report}
+
 \setlength{\textwidth}{6.5in}
 \setlength{\textheight}{8.5in}
 \setlength{\evensidemargin}{0in}
 \setlength{\oddsidemargin}{0in}
 \setlength{\topmargin}{0in}
+
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.1in}
+
+% Uncomment for double-spaced document.
+% \renewcommand{\baselinestretch}{2}
+
+% \usepackage{epsf}
+
 %--------packages I used----------------------------
+\usepackage[utf8]{inputenc}
 \usepackage{verbatim}
 \usepackage{multirow}
 \usepackage{latexsym}
@@ -32,7 +43,6 @@
 \newcommand{\naren}[1]{[{\color{red}\textit{Naren}\textit{: #1}}]}
 \newcommand{\TODO}[2]{{\color{magenta}[\textbf{TODO:} #2 \\ \textbf{Assignee:} #1]}}
 
-
 % symbols and stuff from Bert's paper
 \newcommand{\then}{\Rightarrow}
 \newcommand{\softor}{\operatornamewithlimits{\tilde{\vee}}}
@@ -42,50 +52,73 @@
 %--------------------------------------------------------
 
 \begin{document}
+
 \thispagestyle{empty}
 \pagenumbering{roman}
-
 \begin{center}
+
 % TITLE
 {\Large 
 Automated Vocabulary Building\\
 for Characterizing and Forecasting Elections\\
 using Social Media Analytics
 }
+
 \vfill
+
 Aravindan Mahendiran
+
 \vfill
+
 Thesis submitted to the Faculty of the \\
 Virginia Polytechnic Institute and State University \\
 in partial fulfillment of the requirements for the degree of
+
 \vfill
+
 Master of Science \\
 in \\
 Computer Science and Applications
+
 \vfill
+
 Naren Ramakrishnan, Chair \\
 Cal Ribbens \\
-Aditya Prakash
+B.Aditya Prakash
+
 \vfill
+
 January 10, 2014 \\
 Blacksburg, Virginia
+
 \vfill
+
 Keywords: Election Forecasting, Twitter, Query Expansion, Social Group Modeling, Probabilistic Soft Logic \\
 Copyright 2014, Aravindan Mahendiran
-\end{center}
-\pagebreak
-\thispagestyle{empty}
 
+\end{center}
+
+\pagebreak
+
+\thispagestyle{empty}
 \begin{center}
+
 {\large Automated Vocabulary Building\\
 for Characterizing and Forecasting Elections\\
 using Social Media Analytics}
+
 \vfill
+
 Aravindan Mahendiran
+
 \vfill
+
 (ABSTRACT)
+
 \vfill
+
 \end{center}
+
 Twitter has become a popular data source in the recent decade and garnered a significant amount
 of attention as a surrogate data source for many important forecasting problems.
 Strong correlations have been observed between Twitter indicators
@@ -104,23 +137,41 @@ relational domains. Using eight presidential elections from Latin America, we sh
 improves the performance of traditional election forecasting algorithms. 
 Through this approach we demonstrate how we can achieve close to a two-fold increase in the number of tweets
 retrieved for predictions and a 36.90\% reduction in prediction error. 
+
+\vfill
+
+% GRANT INFORMATION
+
+%That this work received support from the Southeastern Universities
+%Research Association (SURA) ``Monticello Library Project'' is purely
+%coincidental.
+
 \pagebreak
 
 % Dedication and Acknowledgments are both optional
 \chapter*{Dedication}
+
 \vspace*{\fill}
+
 \begin{center}
 \Large\textit{To my awesomest brother, mother and friends}
 \end{center}
+
 \vspace{\fill}
 
 \chapter*{Acknowledgments}
+
 \vspace*{\fill}
-\Large{First and foremost, I would like to thank my advisor Dr.Naren Ramakrishnan. He was not only instrumental in kindling my interest in machine learning and data mining but is also my mentor in many ways.\\
-I would like to thank Dr.Cal Ribbens and Dr.Aditya Prakash for their guidance throughout my research.\\
-I would also like to thank Dr.Bert Huang and Dr.Lise Getoor for introducing me to Probabilistic Soft Logic and providing me the PSL engine for my research.\\
-I would like to thank my fellow graduate students Nabeel Mohammed, Rupinder Paul Khandpur and Sathappan Muthiah. Their help and support were invaluable through my graduate studies.
-}
+
+%{\large
+I would like to thank the following people:\\
+First and foremost, my advisor Dr.Naren Ramakrishnan. He was not only instrumental in kindling my interest in machine learning and data mining but is also my mentor in many ways.\\
+Dr.Cal Ribbens and Dr.B.Aditya Prakash for their guidance throughout my research.\\
+Dr.Bert Huang and Dr.Lise Getoor for introducing me to Probabilistic Soft Logic and providing me the PSL engine for my research.\\
+Dr.David Mares and Jaime Arredondo for helping me analyze the political scene in Latin America.\\
+My fellow graduate students Nabeel Mohammed, Rupinder Paul Khandpur and Sathappan Muthiah. Their help and support were invaluable through my graduate studies.
+%}
+
 \vspace{\fill}
 
 \tableofcontents

@@ -54,8 +54,8 @@ Brendan O'Connor, Ramnath Balasubramanyan, Bryan~R Routledge \emph{et~al.},
 
 \bibitem{saez2011total}
 Diego Saez-Trumper, Wagner Meira, and Virgilio Almeida, ``From total hits to
-  unique visitors model for electionâ€™s forecasting,'' in
-  \emph{International Conference on Web Science}, 2011.
+  unique visitors model for elections forecasting,'' in \emph{International
+  Conference on Web Science}, 2011.
 
 \bibitem{bermingham2011using}
 Adam Bermingham and Alan~F Smeaton, ``On using twitter to monitor political
@@ -72,8 +72,8 @@ Avishay Livne, Matthew~P Simmons, Eytan Adar \emph{et~al.}, ``The party is over
 \bibitem{conover2011predicting}
 Michael~D Conover, Bruno Gon{\c{c}}alves, Jacob Ratkiewicz \emph{et~al.},
   ``Predicting the political alignment of twitter users,'' in \emph{Privacy,
-  security, risk and trust (passat), 2011 ieee third international conference
-  on and 2011 ieee third international conference on social computing
+  security, risk and trust (passat), 2011 IEEE third international conference
+  on and 2011 IEEE third international conference on social computing
   (socialcom)}.\hskip 1em plus 0.5em minus 0.4em\relax IEEE, 2011, pp.
   192--199.
 
@@ -86,8 +86,8 @@ Ernesto Diaz-Aviles, Claudia Orellana-Rodriguez, and Wolfgang Nejdl, ``Taking
 \bibitem{mustafaraj2011vocal}
 Eni Mustafaraj, Samantha Finn, Carolyn Whitlock \emph{et~al.}, ``Vocal minority
   versus silent majority: Discovering the opionions of the long tail,'' in
-  \emph{Privacy, security, risk and trust (passat), 2011 ieee third
-  international conference on and 2011 ieee third international conference on
+  \emph{Privacy, security, risk and trust (passat), 2011 IEEE third
+  international conference on and 2011 IEEE third international conference on
   social computing (socialcom)}.\hskip 1em plus 0.5em minus 0.4em\relax IEEE,
   2011, pp. 103--110.
 
@@ -99,7 +99,7 @@ Panagiotis~Takis Metaxas, Eni Mustafaraj, and Daniel Gayo-Avello, ``How (not)
   0.4em\relax IEEE, 2011, pp. 165--171.
 
 \bibitem{gayo2012wanted}
-Daniel Gayo-Avello, ``" i wanted to predict elections with twitter and all i
+Daniel Gayo-Avello, ``'' i wanted to predict elections with twitter and all i
   got was this lousy paper"--a balanced survey on election prediction using
   twitter data,'' \emph{arXiv preprint arXiv:1204.6441}, 2012.
 
@@ -111,16 +111,16 @@ Daniel Gayo-Avello, ``" i wanted to predict elections with twitter and all i
 Daniel Gayo-Avello, Panagiotis~Takis Metaxas, and Eni Mustafaraj, ``Limits of
   electoral predictions using twitter.'' in \emph{ICWSM}, 2011.
 
-\bibitem{huang2012social}
-Bert Huang, Stephen~H Bach, Eric Norris \emph{et~al.}, ``Social group modeling
-  with probabilistic soft logic,'' in \emph{NIPS Workshop on Social Network and
-  Social Media Analysis: Methods, Models, and Applications}, 2012.
-
 \bibitem{kimmig2012short}
 Angelika Kimmig, Stephen Bach, Matthias Broecheler \emph{et~al.}, ``A short
   introduction to probabilistic soft logic,'' in \emph{Proceedings of the NIPS
   Workshop on Probabilistic Programming: Foundations and Applications}, 2012,
   pp. 1--4.
+
+\bibitem{manning2008introduction}
+Christopher~D Manning, Prabhakar Raghavan, and Hinrich Sch{\"u}tze,
+  \emph{Introduction to information retrieval}.\hskip 1em plus 0.5em minus
+  0.4em\relax Cambridge University Press Cambridge, 2008, vol.~1.
 
 \bibitem{broecheler2010computing}
 Matthias Broecheler and Lise Getoor, ``Computing marginal distributions over
@@ -128,7 +128,7 @@ Matthias Broecheler and Lise Getoor, ``Computing marginal distributions over
   \emph{Advances in Neural Information Processing Systems}, 2010, pp. 316--324.
 
 \bibitem{brocheler2012probabilistic}
-Matthias Brocheler, Lilyana Mihalkova, and Lise Getoor, ``Probabilistic
+Matthias Broecheler, Lilyana Mihalkova, and Lise Getoor, ``Probabilistic
   similarity logic,'' \emph{arXiv preprint arXiv:1203.3469}, 2012.
 
 \bibitem{bach2010decision}
@@ -150,5 +150,15 @@ Bert Huang, Angelika Kimmig, Lise Getoor \emph{et~al.}, ``Probabilistic soft
 Alex Memory, Angelika Kimmig, Stephen Bach \emph{et~al.}, ``Graph summarization
   in annotated data using probabilistic soft logic,'' \emph{status: accepted},
   2012.
+
+\bibitem{bach2013hinge}
+Stephen~H. Bach, Bert Huang, Ben London \emph{et~al.}, ``Hinge-loss {M}arkov
+  random fields: Convex inference for structured prediction,'' in
+  \emph{{Uncertainty in Artificial Intelligence (UAI)}}, 2013.
+
+\bibitem{huang2012social}
+Bert Huang, Stephen~H Bach, Eric Norris \emph{et~al.}, ``Social group modeling
+  with probabilistic soft logic,'' in \emph{NIPS Workshop on Social Network and
+  Social Media Analysis: Methods, Models, and Applications}, 2012.
 
 \end{thebibliography}

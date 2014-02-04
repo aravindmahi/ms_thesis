@@ -138,13 +138,13 @@ the candidate and names/symbols of political parties contesting the elections.
 Given that the language used on Twitter is completely different from the language in newspapers and magazines, this process will likely yield a very low recall.
 %\aravind{Recall is used as a place holder. How to word this better?.}
 %\naren{Recall is correct here. My only complaint is that you have no way of measuring the recall.}
-For example, for the 2012 presidential election in Venezuela users preferred  the hashtags \emph{\#elmundocochavez} and \emph{\#hayuncamino} to show their support for Hugo Chavez and Henrique Capriles respectively.
+For example, for the 2012 presidential election in Venezuela users preferred  the hashtags \emph{\#elmundocochavez} and \emph{\#hayuncamino} to show their support for Hugo Cha\'{a}vez and Henrique Capriles respectively.
 Such hashtags are not known {\it a priori} and gain more traction and adoption closer to the election.
 Querying just for ``chavez" or ``capriles" would result in discarding a huge bank of tweets that are indicative 
 of a candidate's popularity.
 Thus, it becomes vital that any methodology that predicts elections accounts for such memes that become popular 
 during the time period leading up to the election.
-
+\begin{comment}
 In this work we build on earlier work in social group modeling~\cite{huang2012social} and address this issue by:
 \begin{itemize}
 \item
@@ -156,7 +156,29 @@ tweets and improving the accuracy of prediction algorithms.
 \item Conducting an exhaustive evaluation of our methodology across a set of national, state-level, and mayoral
 elections in multiple countries of Latin America.
 \end{itemize}
+\end{comment}
 
+In this work we propose a dynamic query expansion strategy that aids in modeling social groups of interest over time, and
+use the domain of elections to demonstrate the effectiveness of our approach. Modeling elections provides both
+qualitative and quantitative insight into the utility of our approach.
+Our key contributions are:
+\begin{enumerate}
+\item We demonstrate
+a novel unsupervised learning algorithm that builds dynamic vocabularies using Probabilistic Soft Logic (PSL) ~\cite{kimmig2012short}, a framework for probabilistic reasoning over relational domains.
+Beginning with a small seed set of keywords/hashtags, we demonstrate how our PSL program helps
+grow the seed set into 
+vocabularies involving hundreds of relevant terms. This aids in significantly improving the retrieval of tweets
+corresponding to relevant
+social groups of interest.
+\item Using eight presidential elections from six countries of Latin America (Mexico, Venezuela, Ecuador, Paraguay, Chile, and Honduras), we show how our query expansion methodology helps capture dynamic trends and
+better ascertain group memberships of users. Our %experimentation 
+experiments over the Latin American region (where tweets
+arise from a multilingual set, including English, Spanish, Portugese, and French) demonstrates the practical utility
+of our approach.
+\item In addition to qualitative understanding of social groups, we demonstrate how our approach yields
+appreciable improvements to the forecasting of election outcomes. By regressing against opinion polls in each region,
+we illustrate how better social group modeling reveals popularities of candidates and their policies.
+\end{enumerate}
 \section{Document Overview}
 The rest of the document is organized as follows:
 In the next chapter, we outline the Probabilistic Soft Logic (PSL) framework and how we take advantage 

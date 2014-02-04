@@ -1,9 +1,9 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {3.1}{\ignorespaces Regression coefficients learned for features\relax }}{23}
-\contentsline {table}{\numberline {3.2}{\ignorespaces Track Record of Prediction Algorithms\relax }}{23}
+\contentsline {table}{\numberline {3.1}{\ignorespaces Regression coefficients learned for features\relax }}{20}
+\contentsline {table}{\numberline {3.2}{\ignorespaces Track Record of Prediction Algorithms\relax }}{20}
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {4.1}{\ignorespaces Reduction in prediction error for Unique Visitor Model. All values shown are percentages.\relax }}{26}
-\contentsline {table}{\numberline {4.2}{\ignorespaces Reduction in prediction error for Regression Model. All values shown are percentages.\relax }}{27}
+\contentsline {table}{\numberline {4.1}{\ignorespaces Reduction in prediction error for Unique Visitor Model. All values shown are percentages.\relax }}{23}
+\contentsline {table}{\numberline {4.2}{\ignorespaces Reduction in prediction error for Regression Model. All values shown are percentages.\relax }}{24}
 \addvspace {10\p@ }
